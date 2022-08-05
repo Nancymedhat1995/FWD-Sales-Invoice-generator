@@ -251,10 +251,30 @@ public class InvoiceActionListener implements ActionListener {
         lineDialog = null;
     }
 
-    private void deleteInvoice() {
-    }
+  private void deleteInvoice() {
+        int selectedInvoiceIndex = Frame.getInvHTbl().getSelectedRow();
+        if (selectedInvoiceIndex != -1) {
+            Frame.getInvoicesArray().remove(selectedInvoiceIndex);
+            Frame.getHeaderTableModel().fireTableDataChanged();
 
-    private void deleteLine() {
+            Frame.getInvLTbl().setModel(new InvoiceDetailsTable(null));
+            Frame.setLinesArray(null);
+            Frame.getCustNameLbl().setText("");
+            Frame.getInvNumLbl().setText("");
+            Frame.getInvTotalIbl().setText("");
+            Frame.getInvDateLbl().setText("");
+        }
     }
-
+     private void deleteLine() {
+        int selectedLineIndex = Frame.getInvLTbl().getSelectedRow();
+        int selectedInvoiceIndex = Frame.getInvHTbl().getSelectedRow();
+        if (selectedLineIndex != -1) {
+            Frame.getLinesArray().remove(selectedLineIndex);
+            InvoiceDetailsTable lineTableModel = (InvoiceDetailsTable) Frame.getInvLTbl().getModel();
+            lineTableModel.fireTableDataChanged();
+            Frame.getInvTotalIbl().setText(""+Frame.getInvoicesArray().get(selectedInvoiceIndex).getInvoiceTotal());
+            Frame.getHeaderTableModel().fireTableDataChanged();
+            Frame.getInvHTbl().setRowSelectionInterval(selectedInvoiceIndex, selectedInvoiceIndex);
+        }
+    }
 }
