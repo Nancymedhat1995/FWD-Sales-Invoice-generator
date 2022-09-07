@@ -24,6 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
 
 
 
@@ -175,10 +176,39 @@ public class InvoiceActionListener implements ActionListener {
     
     
     
-    
     private void saveFiles() {
+        ArrayList<SalesInvoiceHeader> invoicesArray = Frame.getInvoicesArray();
+        JFileChooser fc = new JFileChooser();
+        try {
+            int result = fc.showSaveDialog(Frame);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File headerFile = fc.getSelectedFile();
+                FileWriter Writer = new FileWriter(headerFile);
+                String headers = "";
+                String lines = "";
+                for (SalesInvoiceHeader invoice : invoicesArray) {
+                    headers += invoice.toString();
+                    headers += "\n";
+                    for (SalesInvoiceLine line : invoice.getLines()) {
+                        lines += line.toString();
+                        lines += "\n";
+                    }
+                }
+                
+                headers = headers.substring(0, headers.length()-1);
+                lines = lines.substring(0, lines.length()-1);
+                result = fc.showSaveDialog(Frame);
+                File lineFile = fc.getSelectedFile();
+                FileWriter lfw = new FileWriter(lineFile);
+                Writer.write(headers);
+                lfw.write(lines);
+                Writer.close();
+                lfw.close();
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(Frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-
     private void newInvoiceDialogCancel() {
         headDialog.setVisible(false);
         headDialog.dispose();
